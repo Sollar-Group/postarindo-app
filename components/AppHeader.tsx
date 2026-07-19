@@ -1,37 +1,46 @@
 import React from 'react';
-import { View, Image, StyleSheet, TouchableOpacity, useColorScheme } from 'react-native';
+import { View, Image, StyleSheet, TouchableOpacity, useColorScheme, Text } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export function AppHeader() {
   const router = useRouter();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
+  const insets = useSafeAreaInsets();
 
   return (
-    <View style={[styles.header, isDark ? styles.headerDark : styles.headerLight]}>
-      <Image
-        source={require('../assets/app-icon.png')}
-        style={styles.logo}
-        resizeMode="contain"
-      />
-      <TouchableOpacity onPress={() => router.push('/login')}>
+    <View style={[
+      styles.headerContainer,
+      isDark ? styles.headerDark : styles.headerLight,
+      { paddingTop: insets.top }
+    ]}>
+      <View style={styles.headerContent}>
         <Image
-          source={{ uri: 'https://cdn.lucide.dev/icons/user.svg' }} // Placeholder or replace with text
-          style={{ width: 24, height: 24, tintColor: isDark ? '#FFF' : '#000' }}
+          source={require('../assets/app-icon.png')}
+          style={styles.logo}
+          resizeMode="contain"
         />
-      </TouchableOpacity>
+        <TouchableOpacity onPress={() => router.push('/login')}>
+          <Text style={[styles.loginText, isDark ? styles.loginTextDark : styles.loginTextLight]}>
+            Entrar / Cadastrar
+          </Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  header: {
+  headerContainer: {
+    borderBottomWidth: 1,
+  },
+  headerContent: {
     height: 60,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
-    borderBottomWidth: 1,
   },
   headerLight: {
     backgroundColor: '#FFFFFF',
@@ -44,5 +53,15 @@ const styles = StyleSheet.create({
   logo: {
     height: 32,
     width: 120,
+  },
+  loginText: {
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  loginTextLight: {
+    color: '#111827',
+  },
+  loginTextDark: {
+    color: '#F9FAFB',
   }
 });

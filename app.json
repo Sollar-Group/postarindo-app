@@ -28,7 +28,7 @@
       "expo-router"
     ],
     "splash": {
-      "image": "./assets/splash-icon-no-text.png",
+      "image": "./assets/splash.image.png",
       "resizeMode": "contain",
       "backgroundColor": "#111827"
     },
