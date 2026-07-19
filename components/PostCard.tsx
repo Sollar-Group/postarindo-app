@@ -132,21 +132,30 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
           {ytId ? (
             <WebView
               source={{ uri: `https://www.youtube.com/embed/${ytId}` }}
-              style={styles.video}
+              style={{ width: '100%', height: 250 }}
+              javaScriptEnabled={true}
+              domStorageEnabled={true}
+              allowsInlineMediaPlayback={true}
               allowsFullscreenVideo
               scrollEnabled={false}
             />
           ) : tkId ? (
             <WebView
               source={{ uri: `https://www.tiktok.com/embed/v2/${tkId}` }}
-              style={styles.video}
+              style={{ width: '100%', height: 250 }}
+              javaScriptEnabled={true}
+              domStorageEnabled={true}
+              allowsInlineMediaPlayback={true}
               allowsFullscreenVideo
               scrollEnabled={false}
             />
           ) : (
              <WebView
               source={{ uri: post.video_url }}
-              style={styles.video}
+              style={{ width: '100%', height: 250 }}
+              javaScriptEnabled={true}
+              domStorageEnabled={true}
+              allowsInlineMediaPlayback={true}
               allowsFullscreenVideo
               scrollEnabled={false}
             />
@@ -296,7 +305,7 @@ const styles = StyleSheet.create({
   },
   videoContainer: {
     width: '100%',
-    height: 300,
+    height: 250,
     borderRadius: 8,
     marginBottom: 12,
     overflow: 'hidden',
