@@ -2,14 +2,16 @@
 import React, { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, FlatList, SafeAreaView, useColorScheme, ActivityIndicator, TextInput, ScrollView, TouchableOpacity , Alert } from 'react-native';
-import { supabase } from './lib/supabase';
-import { Post } from './types';
-import { PostCard } from './components/PostCard';
+import { useRouter } from 'expo-router';
+import { supabase } from '../lib/supabase';
+import { Post } from '../types';
+import { PostCard } from '../components/PostCard';
 
 const CATEGORIES = ['Inicial', 'Charadas', 'Frases', 'Imagens', 'Piadas', 'Vídeos'];
 const ITEMS_PER_PAGE = 10;
 
 export default function App() {
+  const router = useRouter();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
 
@@ -100,7 +102,7 @@ export default function App() {
         <Text style={[styles.headerTitle, isDark ? styles.textDark : styles.textLight]}>
           PostaRindo
         </Text>
-        <TouchableOpacity onPress={() => Alert.alert('Navegar', 'Ir para tela de Login')}>
+        <TouchableOpacity onPress={() => router.push('/login')}>
           <Text style={[styles.loginButton, isDark ? styles.textDark : styles.textLight]}>Entrar / Cadastrar</Text>
         </TouchableOpacity>
       </View>
