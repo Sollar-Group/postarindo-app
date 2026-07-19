@@ -1,37 +1,57 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, FlatList, SafeAreaView, useColorScheme } from 'react-native';
-
-const PLACEHOLDER_DATA = [
-  { id: '1', title: 'First Post' },
-  { id: '2', title: 'Second Post' },
-  { id: '3', title: 'Third Post' },
-];
-
-type ItemProps = { title: string; isDark: boolean };
-
-const Item = ({ title, isDark }: ItemProps) => (
-  <View style={[styles.item, isDark ? styles.itemDark : styles.itemLight]}>
-    <Text style={isDark ? styles.textDark : styles.textLight}>{title}</Text>
-  </View>
-);
+import { StyleSheet, Text, View, FlatList, SafeAreaView, useColorScheme, ActivityIndicator } from 'react-native';
+import { useState, useEffect } from 'react';
+import { supabase } from './lib/supabase';
+import { Post } from './types';
+import { PostCard } from './components/PostCard';
 
 export default function App() {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
 
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchPosts();
+  }, []);
+
+  const fetchPosts = async () => {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from('posts')
+      .select('*, autor:usuarios(nome_exibicao, avatar_url)')
+      .eq('status_aprovacao', 'aprovado')
+      .order('published_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching posts:', error);
+    } else {
+      setPosts(data as Post[]);
+    }
+    setLoading(false);
+  };
+
   return (
     <SafeAreaView style={[styles.container, isDark ? styles.containerDark : styles.containerLight]}>
-      <View style={styles.header}>
+      <View style={[styles.header, isDark ? styles.headerDark : styles.headerLight]}>
         <Text style={[styles.headerTitle, isDark ? styles.textDark : styles.textLight]}>
           PostaRindo
         </Text>
       </View>
-      <FlatList
-        data={PLACEHOLDER_DATA}
-        renderItem={({ item }) => <Item title={item.title} isDark={isDark} />}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.listContent}
-      />
+
+      {loading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={isDark ? "#FFFFFF" : "#000000"} />
+        </View>
+      ) : (
+        <FlatList
+          data={posts}
+          renderItem={({ item }) => <PostCard post={item} />}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.listContent}
+        />
+      )}
       <StatusBar style="auto" />
     </SafeAreaView>
   );
@@ -51,25 +71,26 @@ const styles = StyleSheet.create({
     padding: 16,
     alignItems: 'center',
     borderBottomWidth: 1,
+  },
+  headerLight: {
+    borderBottomColor: '#E5E7EB',
+    backgroundColor: '#FFFFFF',
+  },
+  headerDark: {
     borderBottomColor: '#374151',
+    backgroundColor: '#1F2937',
   },
   headerTitle: {
     fontSize: 24,
     fontWeight: 'bold',
   },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   listContent: {
     padding: 16,
-  },
-  item: {
-    padding: 16,
-    marginBottom: 12,
-    borderRadius: 8,
-  },
-  itemLight: {
-    backgroundColor: '#FFFFFF',
-  },
-  itemDark: {
-    backgroundColor: '#1F2937',
   },
   textLight: {
     color: '#111827',
