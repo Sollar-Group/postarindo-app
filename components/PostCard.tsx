@@ -1,5 +1,6 @@
+
 import React, { useState } from 'react';
-import { View, Text, Image, StyleSheet, useColorScheme, TouchableOpacity, Linking } from 'react-native';
+import { View, Text, Image, StyleSheet, useColorScheme, TouchableOpacity } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { Eye, ThumbsUp, ThumbsDown, MessageCircle, Share2 } from 'lucide-react-native';
 import { formatDistanceToNow } from 'date-fns';
@@ -19,7 +20,45 @@ const colorMap: Record<string, string> = {
   'bg-indigo-500': '#6366f1',
   'bg-teal-500': '#14b8a6',
   'bg-orange-500': '#f97316',
+  'bg-slate-500': '#64748b',
+  'bg-gray-500': '#6b7280',
+  'bg-zinc-500': '#71717a',
+  'bg-neutral-500': '#737373',
+  'bg-stone-500': '#78716c',
+  'bg-amber-500': '#f59e0b',
+  'bg-lime-500': '#84cc16',
+  'bg-emerald-500': '#10b981',
+  'bg-cyan-500': '#06b6d4',
+  'bg-sky-500': '#0ea5e9',
+  'bg-violet-500': '#8b5cf6',
+  'bg-fuchsia-500': '#d946ef',
+  'bg-rose-500': '#f43f5e',
 };
+
+function resolveBackgroundColor(corFundo?: string, isDark?: boolean) {
+  const defaultBg = isDark ? '#374151' : '#E5E7EB';
+  if (!corFundo) return defaultBg;
+
+  // Check if it's a direct match in colorMap
+  if (colorMap[corFundo]) return colorMap[corFundo];
+
+  // Try to find a matched tailwind color in a gradient string (fallback)
+  const tokens = corFundo.split(' ');
+  for (const token of tokens) {
+    if (token.startsWith('from-')) {
+      const color = token.replace('from-', 'bg-');
+      if (colorMap[color]) return colorMap[color];
+    }
+    if (colorMap[token]) return colorMap[token];
+  }
+
+  // Return literal color if it looks like hex/rgb, otherwise default
+  if (corFundo.startsWith('#') || corFundo.startsWith('rgb')) {
+    return corFundo;
+  }
+
+  return defaultBg;
+}
 
 function getYouTubeId(url: string) {
   const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
@@ -33,7 +72,7 @@ function getTikTokId(url: string) {
   return match ? match[1] : null;
 }
 
-export const PostCard: React.FC<PostCardProps> = ({ post }: PostCardProps) => {
+export const PostCard: React.FC<PostCardProps> = ({ post }) => {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
 
@@ -41,16 +80,11 @@ export const PostCard: React.FC<PostCardProps> = ({ post }: PostCardProps) => {
 
   const authorName = post.anonimo ? 'Anônimo' : post.autor.nome_exibicao;
   const instagramHandle = post.autor.instagram_handle;
+  const avatarUrl = post.autor.avatar_url;
   const votesBalance = post.upvotes - post.downvotes;
 
-  let backgroundColor = isDark ? '#374151' : '#E5E7EB';
-  if (post.cor_fundo && colorMap[post.cor_fundo]) {
-    backgroundColor = colorMap[post.cor_fundo];
-  } else if (post.cor_fundo) {
-    backgroundColor = post.cor_fundo;
-  }
-
-  const iconColor = isDark ? '#F9FAFB' : '#111827';
+  const backgroundColor = resolveBackgroundColor(post.cor_fundo, isDark);
+  const iconColor = isDark ? '#9CA3AF' : '#4B5563';
   const timeAgo = post.published_at ? formatDistanceToNow(new Date(post.published_at), { addSuffix: true }) : '';
 
   const ytId = post.video_url ? getYouTubeId(post.video_url) : null;
@@ -60,15 +94,24 @@ export const PostCard: React.FC<PostCardProps> = ({ post }: PostCardProps) => {
     <View style={[styles.card, isDark ? styles.cardDark : styles.cardLight]}>
       {/* Header */}
       <View style={styles.header}>
-        <View style={styles.authorContainer}>
-          <Text style={[styles.authorName, isDark ? styles.textDark : styles.textLight]}>
-            {authorName}
-          </Text>
-          {instagramHandle && (
-            <Text style={styles.instagramHandle}>@{instagramHandle}</Text>
+        <View style={styles.authorRow}>
+          {post.anonimo || !avatarUrl ? (
+            <View style={styles.avatarPlaceholder}>
+              <Text style={styles.avatarText}>{authorName.charAt(0).toUpperCase()}</Text>
+            </View>
+          ) : (
+            <Image source={{ uri: avatarUrl }} style={styles.avatar} />
           )}
+          <View style={styles.authorContainer}>
+            <Text style={[styles.authorName, isDark ? styles.textDark : styles.textLight]}>
+              {authorName}
+            </Text>
+            {instagramHandle && !post.anonimo && (
+              <Text style={styles.instagramHandle}>@{instagramHandle}</Text>
+            )}
+          </View>
         </View>
-        <Text style={styles.category}>{post.categoria}</Text>
+        <Text style={styles.timeAgo}>{timeAgo}</Text>
       </View>
 
       {/* Content */}
@@ -113,7 +156,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post }: PostCardProps) => {
 
       {(post.tipo === 'texto' || post.tipo === 'charada') ? (
         <View style={[styles.textContent, { backgroundColor }]}>
-          <Text style={[styles.bodyText, isDark ? styles.textDark : styles.textLight]}>
+          <Text style={[styles.bodyText, { color: '#FFFFFF' }]}>
             {post.conteudo}
           </Text>
         </View>
@@ -125,7 +168,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post }: PostCardProps) => {
             style={styles.riddleToggle}
             onPress={() => setShowRiddle(!showRiddle)}
           >
-            <Eye size={20} color={iconColor} style={styles.riddleIcon} />
+            <Eye size={20} color={isDark ? '#F9FAFB' : '#111827'} style={styles.riddleIcon} />
             <Text style={[styles.riddleToggleText, isDark ? styles.textDark : styles.textLight]}>
               {showRiddle ? 'Ocultar Resposta' : 'Mostrar Resposta'}
             </Text>
@@ -138,40 +181,41 @@ export const PostCard: React.FC<PostCardProps> = ({ post }: PostCardProps) => {
         </View>
       )}
 
-      {/* Footer */}
+      {/* Footer / Action Bar */}
       <View style={styles.footer}>
-        <View style={styles.metadataContainer}>
-          <Text style={styles.timeAgo}>{timeAgo}</Text>
-          {post.tags && post.tags.length > 0 && (
-            <View style={styles.tagsContainer}>
-              {post.tags.map((tag: string, index: number) => (
-                <Text key={index} style={styles.tag}>#{tag}</Text>
-              ))}
-            </View>
-          )}
-        </View>
-
-        <View style={styles.actionsContainer}>
-          <View style={styles.interactions}>
-            <TouchableOpacity style={styles.voteButton}>
-              <ThumbsUp size={20} color={iconColor} />
-            </TouchableOpacity>
-            <Text style={[styles.votes, isDark ? styles.textDark : styles.textLight]}>
-              {votesBalance}
-            </Text>
-            <TouchableOpacity style={styles.voteButton}>
-              <ThumbsDown size={20} color={iconColor} />
-            </TouchableOpacity>
-          </View>
-
+        <View style={styles.leftActions}>
           <TouchableOpacity style={styles.actionButton}>
             <MessageCircle size={20} color={iconColor} />
+            <Text style={[styles.actionText, { color: iconColor }]}>0</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.actionButton}>
             <Share2 size={20} color={iconColor} />
           </TouchableOpacity>
         </View>
+
+        <View style={styles.rightActions}>
+          <TouchableOpacity style={styles.voteButton}>
+            <ThumbsUp size={20} color={iconColor} />
+          </TouchableOpacity>
+          <Text style={[styles.votes, isDark ? styles.textDark : styles.textLight]}>
+            {votesBalance}
+          </Text>
+          <TouchableOpacity style={styles.voteButton}>
+            <ThumbsDown size={20} color={iconColor} />
+          </TouchableOpacity>
+        </View>
       </View>
+
+      {/* Tags */}
+      {post.tags && post.tags.length > 0 && (
+        <View style={styles.tagsContainer}>
+          {post.tags.map((tag: string, index: number) => (
+            <Text key={index} style={[styles.tag, isDark ? styles.tagDark : styles.tagLight]}>
+              #{tag}
+            </Text>
+          ))}
+        </View>
+      )}
     </View>
   );
 };
@@ -181,47 +225,62 @@ const styles = StyleSheet.create({
     padding: 16,
     marginBottom: 16,
     borderRadius: 12,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    borderWidth: 1,
   },
   cardLight: {
     backgroundColor: '#FFFFFF',
+    borderColor: '#E5E7EB',
   },
   cardDark: {
     backgroundColor: '#1F2937',
+    borderColor: '#374151',
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 12,
+  },
+  authorRow: {
+    flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 8,
+  },
+  avatarPlaceholder: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#3B82F6',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  avatarText: {
+    color: '#FFFFFF',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  avatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginRight: 12,
+    backgroundColor: '#D1D5DB',
   },
   authorContainer: {
     flexDirection: 'column',
   },
   authorName: {
     fontWeight: 'bold',
-    fontSize: 14,
+    fontSize: 16,
   },
   instagramHandle: {
     fontSize: 12,
     color: '#6B7280',
     marginTop: 2,
   },
-  category: {
+  timeAgo: {
     fontSize: 12,
     color: '#6B7280',
-    backgroundColor: '#E5E7EB',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
-    overflow: 'hidden',
   },
   title: {
     fontSize: 18,
@@ -233,13 +292,15 @@ const styles = StyleSheet.create({
     height: 200,
     borderRadius: 8,
     marginBottom: 12,
+    backgroundColor: '#E5E7EB',
   },
   videoContainer: {
     width: '100%',
-    height: 250,
+    height: 300,
     borderRadius: 8,
     marginBottom: 12,
     overflow: 'hidden',
+    backgroundColor: '#000000',
   },
   video: {
     flex: 1,
@@ -248,10 +309,14 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 8,
     marginBottom: 12,
+    minHeight: 100,
+    justifyContent: 'center',
   },
   bodyText: {
-    fontSize: 16,
-    lineHeight: 24,
+    fontSize: 18,
+    lineHeight: 26,
+    textAlign: 'center',
+    fontWeight: '500',
   },
   riddleContainer: {
     marginBottom: 12,
@@ -277,52 +342,63 @@ const styles = StyleSheet.create({
   footer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-end',
+    alignItems: 'center',
     marginTop: 8,
-    borderTopWidth: 1,
-    borderTopColor: '#374151',
     paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: '#E5E7EB',
   },
-  actionsContainer: {
+  leftActions: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-  interactions: {
+  rightActions: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginRight: 16,
-  },
-  voteButton: {
-    padding: 4,
   },
   actionButton: {
-    padding: 4,
-    marginLeft: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 8,
+    marginRight: 8,
+    borderRadius: 20,
+    backgroundColor: 'rgba(0,0,0,0.03)',
+  },
+  actionText: {
+    marginLeft: 6,
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  voteButton: {
+    padding: 8,
+    borderRadius: 20,
+    backgroundColor: 'rgba(0,0,0,0.03)',
   },
   votes: {
     fontWeight: '600',
     fontSize: 16,
-    marginHorizontal: 8,
-  },
-  metadataContainer: {
-    flex: 1,
-    flexDirection: 'column',
-    alignItems: 'flex-start',
-    marginRight: 16,
-  },
-  timeAgo: {
-    fontSize: 12,
-    color: '#6B7280',
+    marginHorizontal: 12,
   },
   tagsContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 4,
-    marginTop: 4,
+    marginTop: 16,
   },
   tag: {
     fontSize: 12,
-    color: '#3B82F6',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+    overflow: 'hidden',
+  },
+  tagLight: {
+    backgroundColor: '#F3F4F6',
+    color: '#4B5563',
+  },
+  tagDark: {
+    backgroundColor: '#374151',
+    color: '#D1D5DB',
   },
   textLight: {
     color: '#111827',
