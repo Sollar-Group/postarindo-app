@@ -1,6 +1,7 @@
+
+import React, { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, FlatList, SafeAreaView, useColorScheme, ActivityIndicator, TextInput, ScrollView, TouchableOpacity } from 'react-native';
-import { useState, useEffect } from 'react';
 import { supabase } from './lib/supabase';
 import { Post } from './types';
 import { PostCard } from './components/PostCard';
@@ -23,11 +24,8 @@ export default function App() {
     fetchPosts();
   }, [activeCategory, page]);
 
-  // Refetch when search query changes after a delay, or handle with a submit button.
-  // For simplicity, we can fetch on submit or blur. Let's do a simple effect with debounce.
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
-      // Reset page when searching
       if (page !== 0) {
         setPage(0);
       } else {
@@ -49,12 +47,15 @@ export default function App() {
     if (activeCategory !== 'Inicial') {
       let catFilter = activeCategory;
       if (activeCategory === 'Vídeos') catFilter = 'video';
-      // Adjust this based on actual DB enum values if needed.
-      query = query.eq('categoria', activeCategory);
+
+      if (activeCategory === 'Vídeos') {
+         query = query.eq('tipo', 'video');
+      } else {
+         query = query.eq('categoria', activeCategory);
+      }
     }
 
     if (searchQuery.trim() !== '') {
-      // Basic text search on title or content
       query = query.or(`titulo.ilike.%${searchQuery}%,conteudo.ilike.%${searchQuery}%`);
     }
 
@@ -94,6 +95,7 @@ export default function App() {
 
   return (
     <SafeAreaView style={[styles.container, isDark ? styles.containerDark : styles.containerLight]}>
+      {/* Fixed Header */}
       <View style={[styles.header, isDark ? styles.headerDark : styles.headerLight]}>
         <Text style={[styles.headerTitle, isDark ? styles.textDark : styles.textLight]}>
           PostaRindo
@@ -104,14 +106,7 @@ export default function App() {
       </View>
 
       <View style={[styles.filtersContainer, isDark ? styles.headerDark : styles.headerLight]}>
-        <TextInput
-          style={[styles.searchInput, isDark ? styles.searchInputDark : styles.searchInputLight]}
-          placeholder="Pesquisar..."
-          placeholderTextColor={isDark ? '#9CA3AF' : '#6B7280'}
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-        />
-
+        {/* Categories */}
         <View style={styles.categoriesWrapper}>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.categoriesScroll}>
             {CATEGORIES.map((cat) => (
@@ -138,6 +133,15 @@ export default function App() {
             ))}
           </ScrollView>
         </View>
+
+        {/* Search Bar */}
+        <TextInput
+          style={[styles.searchInput, isDark ? styles.searchInputDark : styles.searchInputLight]}
+          placeholder="Pesquisar..."
+          placeholderTextColor={isDark ? '#9CA3AF' : '#6B7280'}
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+        />
       </View>
 
       {loading && posts.length === 0 ? (
@@ -199,7 +203,7 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 8,
     paddingHorizontal: 12,
-    marginBottom: 12,
+    marginTop: 12, // Added spacing from categories
   },
   searchInputLight: {
     backgroundColor: '#F3F4F6',
