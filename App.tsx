@@ -20,7 +20,7 @@ export default function App() {
     setLoading(true);
     const { data, error } = await supabase
       .from('posts')
-      .select('*, autor:users(nome_exibicao, avatar_url)')
+      .select('*, autor:users!posts_autor_id_fkey(nome_exibicao, avatar_url)')
       .eq('status_aprovacao', 'aprovado')
       .order('published_at', { ascending: false });
 
