@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, FlatList, SafeAreaView, useColorScheme, ActivityIndicator, TextInput, ScrollView, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, FlatList, SafeAreaView, useColorScheme, ActivityIndicator, TextInput, ScrollView, TouchableOpacity , Alert } from 'react-native';
 import { supabase } from './lib/supabase';
 import { Post } from './types';
 import { PostCard } from './components/PostCard';
@@ -56,7 +56,7 @@ export default function App() {
     }
 
     if (searchQuery.trim() !== '') {
-      query = query.or(`titulo.ilike.%${searchQuery}%,conteudo.ilike.%${searchQuery}%`);
+      query = query.or(`conteudo.ilike.%${searchQuery}%,tags.cs.{"${searchQuery}"}`);
     }
 
     const { data, error } = await query;
@@ -100,7 +100,7 @@ export default function App() {
         <Text style={[styles.headerTitle, isDark ? styles.textDark : styles.textLight]}>
           PostaRindo
         </Text>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => Alert.alert('Navegar', 'Ir para tela de Login')}>
           <Text style={[styles.loginButton, isDark ? styles.textDark : styles.textLight]}>Entrar / Cadastrar</Text>
         </TouchableOpacity>
       </View>
