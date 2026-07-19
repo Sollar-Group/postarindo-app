@@ -74,7 +74,7 @@ export default function App() {
         <TouchableOpacity
           style={[styles.pageButton, page === 0 && styles.pageButtonDisabled]}
           disabled={page === 0}
-          onPress={() => setPage(p => Math.max(0, p - 1))}
+          onPress={() => setPage((p: number) => Math.max(0, p - 1))}
         >
           <Text style={styles.pageButtonText}>Anterior</Text>
         </TouchableOpacity>
@@ -84,7 +84,7 @@ export default function App() {
         <TouchableOpacity
           style={[styles.pageButton, posts.length < ITEMS_PER_PAGE && styles.pageButtonDisabled]}
           disabled={posts.length < ITEMS_PER_PAGE}
-          onPress={() => setPage(p => p + 1)}
+          onPress={() => setPage((p: number) => p + 1)}
         >
           <Text style={styles.pageButtonText}>Seguinte</Text>
         </TouchableOpacity>
@@ -98,6 +98,9 @@ export default function App() {
         <Text style={[styles.headerTitle, isDark ? styles.textDark : styles.textLight]}>
           PostaRindo
         </Text>
+        <TouchableOpacity>
+          <Text style={[styles.loginButton, isDark ? styles.textDark : styles.textLight]}>Entrar / Cadastrar</Text>
+        </TouchableOpacity>
       </View>
 
       <View style={[styles.filtersContainer, isDark ? styles.headerDark : styles.headerLight]}>
@@ -144,7 +147,7 @@ export default function App() {
       ) : (
         <FlatList
           data={posts}
-          renderItem={({ item }) => <PostCard post={item} />}
+          renderItem={({ item }: { item: Post }) => <PostCard post={item} />}
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.listContent}
           ListFooterComponent={renderFooter}
@@ -167,8 +170,14 @@ const styles = StyleSheet.create({
   },
   header: {
     padding: 16,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
     borderBottomWidth: 1,
+  },
+  loginButton: {
+    fontSize: 14,
+    fontWeight: '600',
   },
   filtersContainer: {
     padding: 12,
