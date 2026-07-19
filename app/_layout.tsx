@@ -1,5 +1,6 @@
 import { Stack } from 'expo-router';
 import { useColorScheme } from 'react-native';
+import { AppHeader } from '../components/AppHeader';
 
 export default function Layout() {
   const colorScheme = useColorScheme();
@@ -12,8 +13,13 @@ export default function Layout() {
       },
       headerTintColor: isDark ? '#F9FAFB' : '#111827',
     }}>
-      <Stack.Screen name="index" options={{ headerShown: false }} />
-      <Stack.Screen name="login" options={{ title: 'Login' }} />
+      <Stack.Screen
+        name="index"
+        options={{
+          header: () => <AppHeader />
+        }}
+      />
+      <Stack.Screen name="login" options={{ title: 'Login', headerShown: true }} />
       <Stack.Screen name="post/[id]" options={{ title: 'Detalhes' }} />
     </Stack>
   );

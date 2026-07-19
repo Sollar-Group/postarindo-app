@@ -4,7 +4,7 @@
     "slug": "postarindo",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/app-icon.png",
     "userInterfaceStyle": "light",
     "ios": {
       "supportsTablet": true,
@@ -28,9 +28,9 @@
       "expo-router"
     ],
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/splash-icon-no-text.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#111827"
     },
     "scheme": "postarindo"
   }

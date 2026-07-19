@@ -97,16 +97,6 @@ export default function App() {
 
   return (
     <SafeAreaView style={[styles.container, isDark ? styles.containerDark : styles.containerLight]}>
-      {/* Fixed Header */}
-      <View style={[styles.header, isDark ? styles.headerDark : styles.headerLight]}>
-        <Text style={[styles.headerTitle, isDark ? styles.textDark : styles.textLight]}>
-          PostaRindo
-        </Text>
-        <TouchableOpacity onPress={() => router.push('/login')}>
-          <Text style={[styles.loginButton, isDark ? styles.textDark : styles.textLight]}>Entrar / Cadastrar</Text>
-        </TouchableOpacity>
-      </View>
-
       <View style={[styles.filtersContainer, isDark ? styles.headerDark : styles.headerLight]}>
         {/* Categories */}
         <View style={styles.categoriesWrapper}>
