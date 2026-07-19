@@ -111,7 +111,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
 
   return (
     <Link href={`/post/${post.id}`} asChild>
-      <TouchableOpacity style={[styles.card, isDark ? styles.cardDark : styles.cardLight]} activeOpacity={0.9}>
+      <TouchableOpacity style={StyleSheet.flatten([styles.card, isDark ? styles.cardDark : styles.cardLight])} activeOpacity={0.9}>
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.authorRow}>
