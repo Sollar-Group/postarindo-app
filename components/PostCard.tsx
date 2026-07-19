@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, Image, StyleSheet, useColorScheme, TouchableOpacity } from 'react-native';
+import { View, Text, Image, StyleSheet, useColorScheme, TouchableOpacity, Linking } from 'react-native';
 import { WebView } from 'react-native-webview';
-import { Eye, ArrowUp, ArrowDown } from 'lucide-react-native';
+import { Eye, ThumbsUp, ThumbsDown, MessageCircle, Share2 } from 'lucide-react-native';
 import { formatDistanceToNow } from 'date-fns';
 import { Post } from '../types';
 
@@ -9,7 +9,7 @@ interface PostCardProps {
   post: Post;
 }
 
-const tailwindColors: Record<string, string> = {
+const colorMap: Record<string, string> = {
   'bg-red-500': '#ef4444',
   'bg-blue-500': '#3b82f6',
   'bg-green-500': '#22c55e',
@@ -21,7 +21,19 @@ const tailwindColors: Record<string, string> = {
   'bg-orange-500': '#f97316',
 };
 
-export const PostCard: React.FC<PostCardProps> = ({ post }) => {
+function getYouTubeId(url: string) {
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+  const match = url.match(regExp);
+  return (match && match[2].length === 11) ? match[2] : null;
+}
+
+function getTikTokId(url: string) {
+  const regExp = /tiktok\.com\/(?:@[\w.-]+\/video\/|v\/|embed\/v2\/)(\d+)/;
+  const match = url.match(regExp);
+  return match ? match[1] : null;
+}
+
+export const PostCard: React.FC<PostCardProps> = ({ post }: PostCardProps) => {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
 
@@ -32,15 +44,17 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
   const votesBalance = post.upvotes - post.downvotes;
 
   let backgroundColor = isDark ? '#374151' : '#E5E7EB';
-  if (post.cor_fundo && tailwindColors[post.cor_fundo]) {
-    backgroundColor = tailwindColors[post.cor_fundo];
+  if (post.cor_fundo && colorMap[post.cor_fundo]) {
+    backgroundColor = colorMap[post.cor_fundo];
   } else if (post.cor_fundo) {
-    // If it's not a known class but a valid hex, fallback. We'll just map from the mapping for now.
     backgroundColor = post.cor_fundo;
   }
 
   const iconColor = isDark ? '#F9FAFB' : '#111827';
   const timeAgo = post.published_at ? formatDistanceToNow(new Date(post.published_at), { addSuffix: true }) : '';
+
+  const ytId = post.video_url ? getYouTubeId(post.video_url) : null;
+  const tkId = post.video_url ? getTikTokId(post.video_url) : null;
 
   return (
     <View style={[styles.card, isDark ? styles.cardDark : styles.cardLight]}>
@@ -72,12 +86,28 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
 
       {post.tipo === 'video' && post.video_url ? (
         <View style={styles.videoContainer}>
-          <WebView
-            source={{ uri: post.video_url }}
-            style={styles.video}
-            allowsFullscreenVideo
-            scrollEnabled={false}
-          />
+          {ytId ? (
+            <WebView
+              source={{ uri: `https://www.youtube.com/embed/${ytId}` }}
+              style={styles.video}
+              allowsFullscreenVideo
+              scrollEnabled={false}
+            />
+          ) : tkId ? (
+            <WebView
+              source={{ uri: `https://www.tiktok.com/embed/v2/${tkId}` }}
+              style={styles.video}
+              allowsFullscreenVideo
+              scrollEnabled={false}
+            />
+          ) : (
+             <WebView
+              source={{ uri: post.video_url }}
+              style={styles.video}
+              allowsFullscreenVideo
+              scrollEnabled={false}
+            />
+          )}
         </View>
       ) : null}
 
@@ -110,27 +140,36 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
 
       {/* Footer */}
       <View style={styles.footer}>
-        <View style={styles.interactions}>
-          <TouchableOpacity style={styles.voteButton}>
-            <ArrowUp size={24} color={iconColor} />
-          </TouchableOpacity>
-          <Text style={[styles.votes, isDark ? styles.textDark : styles.textLight]}>
-            {votesBalance}
-          </Text>
-          <TouchableOpacity style={styles.voteButton}>
-            <ArrowDown size={24} color={iconColor} />
-          </TouchableOpacity>
-        </View>
-
         <View style={styles.metadataContainer}>
           <Text style={styles.timeAgo}>{timeAgo}</Text>
           {post.tags && post.tags.length > 0 && (
             <View style={styles.tagsContainer}>
-              {post.tags.map((tag, index) => (
+              {post.tags.map((tag: string, index: number) => (
                 <Text key={index} style={styles.tag}>#{tag}</Text>
               ))}
             </View>
           )}
+        </View>
+
+        <View style={styles.actionsContainer}>
+          <View style={styles.interactions}>
+            <TouchableOpacity style={styles.voteButton}>
+              <ThumbsUp size={20} color={iconColor} />
+            </TouchableOpacity>
+            <Text style={[styles.votes, isDark ? styles.textDark : styles.textLight]}>
+              {votesBalance}
+            </Text>
+            <TouchableOpacity style={styles.voteButton}>
+              <ThumbsDown size={20} color={iconColor} />
+            </TouchableOpacity>
+          </View>
+
+          <TouchableOpacity style={styles.actionButton}>
+            <MessageCircle size={20} color={iconColor} />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.actionButton}>
+            <Share2 size={20} color={iconColor} />
+          </TouchableOpacity>
         </View>
       </View>
     </View>
@@ -197,7 +236,7 @@ const styles = StyleSheet.create({
   },
   videoContainer: {
     width: '100%',
-    height: 200,
+    height: 250,
     borderRadius: 8,
     marginBottom: 12,
     overflow: 'hidden',
@@ -238,27 +277,38 @@ const styles = StyleSheet.create({
   footer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: 'flex-end',
     marginTop: 8,
     borderTopWidth: 1,
     borderTopColor: '#374151',
     paddingTop: 12,
   },
+  actionsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   interactions: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginRight: 16,
   },
   voteButton: {
     padding: 4,
   },
+  actionButton: {
+    padding: 4,
+    marginLeft: 12,
+  },
   votes: {
     fontWeight: '600',
     fontSize: 16,
-    marginHorizontal: 12,
+    marginHorizontal: 8,
   },
   metadataContainer: {
+    flex: 1,
     flexDirection: 'column',
-    alignItems: 'flex-end',
+    alignItems: 'flex-start',
+    marginRight: 16,
   },
   timeAgo: {
     fontSize: 12,
@@ -267,13 +317,12 @@ const styles = StyleSheet.create({
   tagsContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
+    gap: 4,
     marginTop: 4,
-    justifyContent: 'flex-end',
   },
   tag: {
     fontSize: 12,
     color: '#3B82F6',
-    marginLeft: 4,
   },
   textLight: {
     color: '#111827',
