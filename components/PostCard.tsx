@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { Link } from 'expo-router';
 import { View, Text, Image, StyleSheet, useColorScheme, TouchableOpacity } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { Eye, ThumbsUp, ThumbsDown, MessageCircle, Share2 } from 'lucide-react-native';
@@ -83,6 +84,16 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
   const avatarUrl = post.autor.avatar_url;
   const votesBalance = post.upvotes - post.downvotes;
 
+
+  let votesColor = isDark ? styles.textDark.color : styles.textLight.color;
+  let votesPrefix = '';
+  if (votesBalance > 0) {
+    votesColor = '#22c55e';
+    votesPrefix = '+';
+  } else if (votesBalance < 0) {
+    votesColor = '#ef4444';
+  }
+
   const backgroundColor = resolveBackgroundColor(post.cor_fundo, isDark);
   const iconColor = isDark ? '#9CA3AF' : '#4B5563';
   const timeAgo = post.published_at ? formatDistanceToNow(new Date(post.published_at), { addSuffix: true }) : '';
@@ -90,8 +101,17 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
   const ytId = post.video_url ? getYouTubeId(post.video_url) : null;
   const tkId = post.video_url ? getTikTokId(post.video_url) : null;
 
+  let parsedTags: string[] = [];
+  if (Array.isArray(post.tags)) {
+    parsedTags = post.tags;
+  } else if (typeof post.tags === 'string') {
+    parsedTags = (post.tags as string).split(',').map(t => t.trim()).filter(t => t.length > 0);
+  }
+
+
   return (
-    <View style={[styles.card, isDark ? styles.cardDark : styles.cardLight]}>
+    <Link href={`/post/${post.id}`} asChild>
+      <TouchableOpacity style={[styles.card, isDark ? styles.cardDark : styles.cardLight]} activeOpacity={0.9}>
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.authorRow}>
@@ -127,12 +147,13 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
         />
       ) : null}
 
+
       {post.tipo === 'video' && post.video_url ? (
         <View style={styles.videoContainer}>
           {ytId ? (
             <WebView
               source={{ uri: `https://www.youtube.com/embed/${ytId}` }}
-              style={{ width: '100%', height: 250 }}
+              style={{ flex: 1, width: '100%', height: 250 }}
               javaScriptEnabled={true}
               domStorageEnabled={true}
               allowsInlineMediaPlayback={true}
@@ -142,7 +163,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
           ) : tkId ? (
             <WebView
               source={{ uri: `https://www.tiktok.com/embed/v2/${tkId}` }}
-              style={{ width: '100%', height: 250 }}
+              style={{ flex: 1, width: '100%', height: 250 }}
               javaScriptEnabled={true}
               domStorageEnabled={true}
               allowsInlineMediaPlayback={true}
@@ -152,7 +173,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
           ) : (
              <WebView
               source={{ uri: post.video_url }}
-              style={{ width: '100%', height: 250 }}
+              style={{ flex: 1, width: '100%', height: 250 }}
               javaScriptEnabled={true}
               domStorageEnabled={true}
               allowsInlineMediaPlayback={true}
@@ -162,6 +183,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
           )}
         </View>
       ) : null}
+
 
       {(post.tipo === 'texto' || post.tipo === 'charada') ? (
         <View style={[styles.textContent, { backgroundColor }]}>
@@ -195,7 +217,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
         <View style={styles.leftActions}>
           <TouchableOpacity style={styles.actionButton}>
             <MessageCircle size={20} color={iconColor} />
-            <Text style={[styles.actionText, { color: iconColor }]}>0</Text>
+            <Text style={[styles.actionText, { color: iconColor }]}>{post.comentariosCount ?? 0}</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.actionButton}>
             <Share2 size={20} color={iconColor} />
@@ -206,9 +228,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
           <TouchableOpacity style={styles.voteButton}>
             <ThumbsUp size={20} color={iconColor} />
           </TouchableOpacity>
-          <Text style={[styles.votes, isDark ? styles.textDark : styles.textLight]}>
-            {votesBalance}
-          </Text>
+          <Text style={[styles.votes, { color: votesColor }]}>{votesPrefix}{votesBalance}</Text>
           <TouchableOpacity style={styles.voteButton}>
             <ThumbsDown size={20} color={iconColor} />
           </TouchableOpacity>
@@ -216,16 +236,17 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
       </View>
 
       {/* Tags */}
-      {post.tags && post.tags.length > 0 && (
+      {parsedTags.length > 0 && (
         <View style={styles.tagsContainer}>
-          {post.tags.map((tag: string, index: number) => (
+          {parsedTags.map((tag: string, index: number) => (
             <Text key={index} style={[styles.tag, isDark ? styles.tagDark : styles.tagLight]}>
               #{tag}
             </Text>
           ))}
         </View>
       )}
-    </View>
+    </TouchableOpacity>
+    </Link>
   );
 };
 

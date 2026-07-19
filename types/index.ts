@@ -19,5 +19,6 @@ export interface Post {
   anonimo: boolean;
   autor: Autor;
   published_at?: string;
-  tags?: string[];
+  tags?: string[] | string;
+  comentariosCount?: number;
 }
