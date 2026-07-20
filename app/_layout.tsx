@@ -19,7 +19,7 @@ export default function Layout() {
           header: () => <AppHeader />
         }}
       />
-      <Stack.Screen name="login" options={{ title: 'Login', headerShown: true }} />
+      <Stack.Screen name="login" options={{ title: 'Login', headerShown: true, headerBackTitle: 'Voltar' }} />
       <Stack.Screen name="post/[id]" options={{ title: 'Detalhes' }} />
     </Stack>
   );
