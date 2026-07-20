@@ -41,7 +41,7 @@ export default function App() {
     setLoading(true);
     let query = supabase
       .from('posts')
-      .select('*, autor:users!posts_autor_id_fkey(nome_exibicao, avatar_url, instagram_handle)')
+      .select('*, autor:users!posts_autor_id_fkey(nome_exibicao, avatar_url, instagram_handle), comentarios(count)')
       .eq('status_aprovacao', 'aprovado')
       .order('published_at', { ascending: false })
       .range(page * ITEMS_PER_PAGE, (page + 1) * ITEMS_PER_PAGE - 1);
@@ -66,7 +66,11 @@ export default function App() {
     if (error) {
       console.error('Error fetching posts:', error);
     } else {
-      setPosts(data as Post[]);
+      const postsWithCommentsCount = (data as any[]).map((item: any) => ({
+        ...item,
+        comentariosCount: item.comentarios?.[0]?.count || 0,
+      }));
+      setPosts(postsWithCommentsCount as Post[]);
     }
     setLoading(false);
   };
