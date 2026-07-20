@@ -61,19 +61,21 @@ function resolveBackgroundColor(corFundo?: string, isDark?: boolean) {
   return defaultBg;
 }
 
-function getYouTubeId(url: string) {
+function getYouTubeId(url?: string | null) {
+  if (!url) return null;
   const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
   const match = url.match(regExp);
   return (match && match[2].length === 11) ? match[2] : null;
 }
 
-function getTikTokId(url: string) {
+function getTikTokId(url?: string | null) {
+  if (!url) return null;
   const regExp = /tiktok\.com\/(?:@[\w.-]+\/video\/|v\/|embed\/v2\/)(\d+)/;
   const match = url.match(regExp);
   return match ? match[1] : null;
 }
 
-export const PostCard: React.FC<PostCardProps> = ({ post }) => {
+export const PostCard: React.FC<PostCardProps> = ({ post }: PostCardProps) => {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
 
@@ -85,7 +87,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
   const votesBalance = post.upvotes - post.downvotes;
 
 
-  let votesColor = isDark ? styles.textDark.color : styles.textLight.color;
+  let votesColor = isDark ? '#F9FAFB' : '#111827';
   let votesPrefix = '';
   if (votesBalance > 0) {
     votesColor = '#22c55e';
@@ -171,15 +173,17 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
               scrollEnabled={false}
             />
           ) : (
-             <WebView
-              source={{ uri: post.video_url }}
-              style={{ flex: 1, width: '100%', height: 250 }}
-              javaScriptEnabled={true}
-              domStorageEnabled={true}
-              allowsInlineMediaPlayback={true}
-              allowsFullscreenVideo
-              scrollEnabled={false}
-            />
+             <View style={styles.absoluteVideoWrapper}>
+              <WebView
+                source={{ uri: post.video_url }}
+                style={{ flex: 1, width: '100%', height: 250 }}
+                javaScriptEnabled={true}
+                domStorageEnabled={true}
+                allowsInlineMediaPlayback={true}
+                allowsFullscreenVideo
+                scrollEnabled={false}
+              />
+            </View>
           )}
         </View>
       ) : null}
@@ -197,7 +201,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
         <View style={styles.riddleContainer}>
           <TouchableOpacity
             style={styles.riddleToggle}
-            onPress={() => setShowRiddle(!showRiddle)}
+            onPress={(e: any) => { e.preventDefault(); e.stopPropagation(); setShowRiddle(!showRiddle); }}
           >
             <Eye size={20} color={isDark ? '#F9FAFB' : '#111827'} style={styles.riddleIcon} />
             <Text style={[styles.riddleToggleText, isDark ? styles.textDark : styles.textLight]}>
@@ -215,21 +219,21 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
       {/* Footer / Action Bar */}
       <View style={styles.footer}>
         <View style={styles.leftActions}>
-          <TouchableOpacity style={styles.actionButton}>
+          <TouchableOpacity style={styles.actionButton} onPress={(e: any) => { e.preventDefault(); e.stopPropagation(); }}>
             <MessageCircle size={20} color={iconColor} />
             <Text style={[styles.actionText, { color: iconColor }]}>{post.comentariosCount ?? 0}</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.actionButton}>
+          <TouchableOpacity style={styles.actionButton} onPress={(e: any) => { e.preventDefault(); e.stopPropagation(); }}>
             <Share2 size={20} color={iconColor} />
           </TouchableOpacity>
         </View>
 
         <View style={styles.rightActions}>
-          <TouchableOpacity style={styles.voteButton}>
+          <TouchableOpacity style={styles.voteButton} onPress={(e: any) => { e.preventDefault(); e.stopPropagation(); }}>
             <ThumbsUp size={20} color={iconColor} />
           </TouchableOpacity>
           <Text style={[styles.votes, { color: votesColor }]}>{votesPrefix}{votesBalance}</Text>
-          <TouchableOpacity style={styles.voteButton}>
+          <TouchableOpacity style={styles.voteButton} onPress={(e: any) => { e.preventDefault(); e.stopPropagation(); }}>
             <ThumbsDown size={20} color={iconColor} />
           </TouchableOpacity>
         </View>
@@ -331,6 +335,16 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     overflow: 'hidden',
     backgroundColor: '#000000',
+    position: 'relative',
+  },
+  absoluteVideoWrapper: {
+    flex: 1,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    height: 250,
   },
   video: {
     flex: 1,
