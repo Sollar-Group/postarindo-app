@@ -1,5 +1,5 @@
-
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import { LinearGradient } from "expo-linear-gradient";
 import { Link } from 'expo-router';
 import { View, Text, Image, StyleSheet, useColorScheme, TouchableOpacity } from 'react-native';
 import { WebView } from 'react-native-webview';
@@ -36,20 +36,40 @@ const colorMap: Record<string, string> = {
   'bg-rose-500': '#f43f5e',
 };
 
-function resolveBackgroundColor(corFundo?: string, isDark?: boolean) {
+function resolveBackgroundColor(corFundo?: string, isDark?: boolean): string | [string, string, ...string[]] {
   const defaultBg = isDark ? '#374151' : '#E5E7EB';
   if (!corFundo) return defaultBg;
 
   // Check if it's a direct match in colorMap
   if (colorMap[corFundo]) return colorMap[corFundo];
 
-  // Try to find a matched tailwind color in a gradient string (fallback)
+  // If it's a gradient
+  if (corFundo.includes('from-') || corFundo.includes('to-')) {
+    const tokens = corFundo.split(' ');
+    let colors = [];
+    for (const token of tokens) {
+      if (token.startsWith('from-')) {
+        const color = token.replace('from-', 'bg-');
+        if (colorMap[color]) colors.push(colorMap[color]);
+      } else if (token.startsWith('via-')) {
+        const color = token.replace('via-', 'bg-');
+        if (colorMap[color]) colors.push(colorMap[color]);
+      } else if (token.startsWith('to-')) {
+        const color = token.replace('to-', 'bg-');
+        if (colorMap[color]) colors.push(colorMap[color]);
+      }
+    }
+    if (colors.length > 0) {
+      if (colors.length === 1) {
+        return [colors[0], colors[0]];
+      }
+      return [colors[0], colors[1], ...colors.slice(2)];
+    }
+  }
+
+  // Fallback for space separated strings that might just be a regular color
   const tokens = corFundo.split(' ');
   for (const token of tokens) {
-    if (token.startsWith('from-')) {
-      const color = token.replace('from-', 'bg-');
-      if (colorMap[color]) return colorMap[color];
-    }
     if (colorMap[token]) return colorMap[token];
   }
 
@@ -190,11 +210,19 @@ export const PostCard: React.FC<PostCardProps> = ({ post }: PostCardProps) => {
 
 
       {(post.tipo === 'texto' || post.tipo === 'charada') ? (
-        <View style={[styles.textContent, { backgroundColor }]}>
-          <Text style={[styles.bodyText, { color: '#FFFFFF' }]}>
-            {post.conteudo}
-          </Text>
-        </View>
+        Array.isArray(backgroundColor) ? (
+          <LinearGradient colors={backgroundColor} style={styles.textContent}>
+            <Text style={[styles.bodyText, { color: '#FFFFFF' }]}>
+              {post.conteudo}
+            </Text>
+          </LinearGradient>
+        ) : (
+          <View style={[styles.textContent, { backgroundColor }]}>
+            <Text style={[styles.bodyText, { color: '#FFFFFF' }]}>
+              {post.conteudo}
+            </Text>
+          </View>
+        )
       ) : null}
 
       {post.categoria === 'Charadas' && post.resposta_charada && (
