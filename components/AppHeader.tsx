@@ -1,14 +1,30 @@
-import React from 'react';
+import * as React from 'react';
+import { useEffect, useState } from 'react';
 import { View, Image, StyleSheet, TouchableOpacity, useColorScheme, Text } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { PlusCircle } from 'lucide-react-native';
+import { PlusCircle, User } from 'lucide-react-native';
+import { supabase } from '../lib/supabase';
+import { Session } from '@supabase/supabase-js';
 
 export function AppHeader() {
   const router = useRouter();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
   const insets = useSafeAreaInsets();
+  const [session, setSession] = useState<Session | null>(null);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   return (
     <View style={[
