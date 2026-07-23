@@ -145,7 +145,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post }: PostCardProps) => {
         <Image
           source={{ uri: post.imagem_url }}
           style={styles.image}
-          resizeMode="cover"
+          resizeMode="contain"
         />
       ) : null}
 
@@ -323,7 +323,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: '100%',
-    height: 200,
+    aspectRatio: 1,
     borderRadius: 8,
     marginBottom: 12,
     backgroundColor: '#E5E7EB',
