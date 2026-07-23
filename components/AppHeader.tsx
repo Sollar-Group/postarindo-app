@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Image, StyleSheet, TouchableOpacity, useColorScheme, Text } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { PlusCircle } from 'lucide-react-native';
 
 export function AppHeader() {
   const router = useRouter();
@@ -21,11 +22,19 @@ export function AppHeader() {
           style={styles.logo}
           resizeMode="contain"
         />
-        <TouchableOpacity onPress={() => router.push('/login')}>
-          <Text style={[styles.loginText, isDark ? styles.loginTextDark : styles.loginTextLight]}>
-            Entrar / Cadastrar
-          </Text>
-        </TouchableOpacity>
+        <View style={styles.actions}>
+          <TouchableOpacity style={styles.publishBtn} onPress={() => router.push('/postar')}>
+            <PlusCircle size={20} color={isDark ? '#FFFFFF' : '#111827'} />
+            <Text style={[styles.publishText, isDark ? styles.textDark : styles.textLight]}>
+              Publicar
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => router.push('/login')} style={styles.loginBtn}>
+            <Text style={[styles.loginText, isDark ? styles.textDark : styles.textLight]}>
+              Entrar / Cadastrar
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
@@ -54,14 +63,31 @@ const styles = StyleSheet.create({
     height: 32,
     width: 120,
   },
+  actions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  publishBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  publishText: {
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  loginBtn: {
+    marginLeft: 8,
+  },
   loginText: {
     fontSize: 14,
     fontWeight: '600',
   },
-  loginTextLight: {
+  textLight: {
     color: '#111827',
   },
-  loginTextDark: {
+  textDark: {
     color: '#F9FAFB',
   }
 });
