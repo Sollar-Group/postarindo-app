@@ -359,7 +359,7 @@ const styles = StyleSheet.create({
   bodyText: {
     fontSize: 18,
     lineHeight: 26,
-    textAlign: 'center',
+    textAlign: 'left',
     fontWeight: '500',
   },
   riddleContainer: {
