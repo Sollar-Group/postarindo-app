@@ -22,3 +22,12 @@ export interface Post {
   tags?: string[] | string;
   comentariosCount?: number;
 }
+
+export interface Comentario {
+  id: string;
+  post_id?: string;
+  autor_id?: string;
+  conteudo: string;
+  created_at: string;
+  autor: Autor;
+}

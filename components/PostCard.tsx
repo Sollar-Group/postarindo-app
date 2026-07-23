@@ -9,6 +9,7 @@ import { Post } from '../types';
 
 interface PostCardProps {
   post: Post;
+  disableLink?: boolean;
 }
 
 const colorMap: Record<string, string> = {
@@ -95,7 +96,7 @@ function getTikTokId(url?: string | null) {
   return match ? match[1] : null;
 }
 
-export const PostCard: React.FC<PostCardProps> = ({ post }: PostCardProps) => {
+export const PostCard: React.FC<PostCardProps> = ({ post, disableLink }: PostCardProps) => {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
 
@@ -131,9 +132,8 @@ export const PostCard: React.FC<PostCardProps> = ({ post }: PostCardProps) => {
   }
 
 
-  return (
-    <Link href={`/post/${post.id}`} asChild>
-      <TouchableOpacity style={StyleSheet.flatten([styles.card, isDark ? styles.cardDark : styles.cardLight])} activeOpacity={0.9}>
+  const CardContent = (
+      <TouchableOpacity style={StyleSheet.flatten([styles.card, isDark ? styles.cardDark : styles.cardLight])} activeOpacity={0.9} disabled={disableLink}>
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.authorRow}>
@@ -278,6 +278,15 @@ export const PostCard: React.FC<PostCardProps> = ({ post }: PostCardProps) => {
         </View>
       )}
     </TouchableOpacity>
+  );
+
+  if (disableLink) {
+    return CardContent;
+  }
+
+  return (
+    <Link href={`/post/${post.id}`} asChild>
+      {CardContent}
     </Link>
   );
 };
