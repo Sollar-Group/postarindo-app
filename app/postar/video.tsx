@@ -67,7 +67,7 @@ export default function PostarVideo() {
       titulo: title,
       conteudo: 'Video',
       video_url: finalUrl,
-      tags: tags.split(',').map(t => t.trim()).filter(Boolean).join(','),
+      tags: tags.split(',').map(t => t.trim()).filter(Boolean),
       tipo: 'video',
       categoria: 'Vídeos',
       status_aprovacao: status,

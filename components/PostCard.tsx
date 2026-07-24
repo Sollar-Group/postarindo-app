@@ -126,9 +126,9 @@ export const PostCard: React.FC<PostCardProps> = ({ post, disableLink }: PostCar
 
   let parsedTags: string[] = [];
   if (Array.isArray(post.tags)) {
-    parsedTags = post.tags;
+    parsedTags = post.tags.flatMap(t => typeof t === 'string' ? t.split(',') : []).map(t => t.trim()).filter(Boolean);
   } else if (typeof post.tags === 'string') {
-    parsedTags = (post.tags as string).split(',').map(t => t.trim()).filter(t => t.length > 0);
+    parsedTags = (post.tags as string).split(',').map(t => t.trim()).filter(Boolean);
   }
 
 

@@ -51,7 +51,7 @@ export default function PostarPiada() {
       autor_id: user?.id,
       titulo: title,
       conteudo: content,
-      tags: tags.split(',').map(t => t.trim()).filter(Boolean).join(','),
+      tags: tags.split(',').map(t => t.trim()).filter(Boolean),
       tipo: 'texto',
       categoria: 'Piadas',
       status_aprovacao: status,
