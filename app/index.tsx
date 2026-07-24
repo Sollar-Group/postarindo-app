@@ -20,12 +20,12 @@ import { Post } from "../types";
 import { PostCard } from "../components/PostCard";
 
 const CATEGORIES = [
-  { id: "Inicial", key: "tudo" },
-  { id: "Piadas", key: "piadas" },
-  { id: "Charadas", key: "charadas" },
-  { id: "Frases", key: "frases" },
-  { id: "Imagens", key: "imagens" },
-  { id: "Vídeos", key: "videos" },
+  { id: "Inicial", key: "feed.tudo" },
+  { id: "Piadas", key: "feed.piadas" },
+  { id: "Charadas", key: "feed.charadas" },
+  { id: "Frases", key: "feed.frases" },
+  { id: "Imagens", key: "feed.imagens" },
+  { id: "Vídeos", key: "feed.videos" },
 ];
 const ITEMS_PER_PAGE = 10;
 
