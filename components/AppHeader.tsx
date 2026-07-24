@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { View, Image, StyleSheet, TouchableOpacity, useColorScheme, Text } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { PlusCircle, User, Globe } from 'lucide-react-native';
+import { User, Globe } from 'lucide-react-native';
 import { useLanguage } from '../lib/LanguageContext';
 import { supabase } from '../lib/supabase';
 import { Session } from '@supabase/supabase-js';
@@ -53,12 +53,7 @@ export function AppHeader() {
             <Globe size={20} color={isDark ? '#FFFFFF' : '#111827'} />
             <Text style={[styles.langText, isDark ? styles.textDark : styles.textLight]}>{language.split('-')[0].toUpperCase()}</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.publishBtn} onPress={() => router.push('/postar')}>
-            <PlusCircle size={20} color={isDark ? '#FFFFFF' : '#111827'} />
-            <Text style={[styles.publishText, isDark ? styles.textDark : styles.textLight]}>
-              {i18n.t('header.publicar')}
-            </Text>
-          </TouchableOpacity>
+
           <TouchableOpacity onPress={() => router.push('/login')} style={styles.loginBtn}>
             <Text style={[styles.loginText, isDark ? styles.textDark : styles.textLight]}>
               {i18n.t('header.entrar_cadastrar')}
@@ -105,15 +100,6 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   langText: {
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  publishBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  publishText: {
     fontSize: 14,
     fontWeight: '600',
   },
