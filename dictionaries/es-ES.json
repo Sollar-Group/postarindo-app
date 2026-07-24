@@ -1,0 +1,56 @@
+{
+  "header": {
+    "publicar": "Publicar",
+    "entrar_cadastrar": "Entrar / Registrarse",
+    "perfil": "Perfil",
+    "sair": "Salir"
+  },
+  "feed": {
+    "pesquisar": "Buscar...",
+    "tudo": "Inicio",
+    "piadas": "Bromas",
+    "charadas": "Acertijos",
+    "frases": "Frases",
+    "imagens": "Imágenes",
+    "videos": "Videos",
+    "anterior": "Anterior",
+    "proximo": "Siguiente",
+    "pagina": "Página %{current} de %{total}",
+    "detalhes": "Detalles"
+  },
+  "login": {
+    "titulo_entrar": "Entrar",
+    "titulo_cadastrar": "Registrarse",
+    "email_placeholder": "Correo electrónico",
+    "senha_placeholder": "Contraseña",
+    "botao_entrar": "Entrar",
+    "botao_cadastrar": "Registrarse",
+    "alternar_para_entrar": "¿Ya tienes una cuenta? Entrar",
+    "alternar_para_cadastrar": "¿No tienes cuenta? Regístrate",
+    "voltar": "Volver"
+  },
+  "postar": {
+    "titulo": "¿Qué quieres publicar?",
+    "piada": "Broma",
+    "charada": "Acertijo",
+    "frase": "Frase",
+    "imagem": "Imagen",
+    "video": "Video",
+    "enviar": "Enviar",
+    "cancelar": "Cancelar",
+    "titulo_placeholder": "Título",
+    "conteudo_placeholder": "Contenido...",
+    "pergunta_placeholder": "Pregunta",
+    "resposta_placeholder": "Respuesta",
+    "url_video": "URL del Video (YouTube, etc)",
+    "selecionar_imagem": "Seleccionar Imagen"
+  },
+  "perfil": {
+    "meus_posts": "Mis Publicaciones",
+    "favoritos": "Favoritos",
+    "editar": "Editar Perfil",
+    "salvar": "Guardar",
+    "cancelar": "Cancelar",
+    "nome_placeholder": "Tu Nombre"
+  }
+}

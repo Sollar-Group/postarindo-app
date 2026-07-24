@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, useColorScheme, SafeAreaView, KeyboardAvoidingView, ScrollView, Platform, Alert, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import { supabase } from '../../lib/supabase';
+import { i18n } from '../../lib/i18n';
 import { findBlockedWord } from '../../lib/moderation';
 
 export default function PostarPiada() {

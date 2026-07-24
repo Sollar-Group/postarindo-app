@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, useColorScheme, SafeAreaView, KeyboardAvoidingView, ScrollView, Platform, Alert, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import { supabase } from '../../lib/supabase';
+import { i18n } from '../../lib/i18n';
 import { findBlockedWord } from '../../lib/moderation';
 
 export default function PostarCharada() {
@@ -97,7 +98,7 @@ export default function PostarCharada() {
             <Text style={[styles.label, isDark ? styles.textDark : styles.textLight]}>A Resposta</Text>
             <TextInput
               style={[styles.input, isDark ? styles.inputDark : styles.inputLight]}
-              placeholder="Digite a resposta aqui"
+              placeholder={i18n.t('postar.resposta_placeholder')}
               placeholderTextColor={isDark ? '#9CA3AF' : '#6B7280'}
               value={answer}
               onChangeText={setAnswer}
@@ -108,7 +109,7 @@ export default function PostarCharada() {
             <Text style={[styles.label, isDark ? styles.textDark : styles.textLight]}>Tags (separadas por vírgula)</Text>
             <TextInput
               style={[styles.input, isDark ? styles.inputDark : styles.inputLight]}
-              placeholder="ex: inteligente, desafio"
+              placeholder="ex: tags"
               placeholderTextColor={isDark ? '#9CA3AF' : '#6B7280'}
               value={tags}
               onChangeText={setTags}

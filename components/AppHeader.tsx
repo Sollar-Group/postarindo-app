@@ -6,6 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { PlusCircle, User } from 'lucide-react-native';
 import { supabase } from '../lib/supabase';
 import { Session } from '@supabase/supabase-js';
+import { i18n } from '../lib/i18n';
 
 export function AppHeader() {
   const router = useRouter();
@@ -42,12 +43,12 @@ export function AppHeader() {
           <TouchableOpacity style={styles.publishBtn} onPress={() => router.push('/postar')}>
             <PlusCircle size={20} color={isDark ? '#FFFFFF' : '#111827'} />
             <Text style={[styles.publishText, isDark ? styles.textDark : styles.textLight]}>
-              Publicar
+              {i18n.t('header.publicar')}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => router.push('/login')} style={styles.loginBtn}>
             <Text style={[styles.loginText, isDark ? styles.textDark : styles.textLight]}>
-              Entrar / Cadastrar
+              {i18n.t('header.entrar_cadastrar')}
             </Text>
           </TouchableOpacity>
         </View>

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator, Alert, useColorScheme } from 'react-native';
 import { useRouter } from 'expo-router';
 import { supabase } from '../lib/supabase';
+import { i18n } from '../lib/i18n';
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -57,7 +58,7 @@ export default function LoginScreen() {
 
         <TextInput
           style={[styles.input, { backgroundColor: '#374151', color: '#F9FAFB', borderColor: '#4B5563' }]}
-          placeholder="E-mail"
+          placeholder={i18n.t('login.email_placeholder')}
           placeholderTextColor="#9CA3AF"
           autoCapitalize="none"
           keyboardType="email-address"
@@ -67,7 +68,7 @@ export default function LoginScreen() {
 
         <TextInput
           style={[styles.input, { backgroundColor: '#374151', color: '#F9FAFB', borderColor: '#4B5563' }]}
-          placeholder="Senha"
+          placeholder={i18n.t('login.senha_placeholder')}
           placeholderTextColor="#9CA3AF"
           secureTextEntry
           value={password}
@@ -82,13 +83,13 @@ export default function LoginScreen() {
           {loading ? (
             <ActivityIndicator color="#FFFFFF" />
           ) : (
-            <Text style={styles.buttonText}>{isSignUp ? 'Cadastrar' : 'Entrar'}</Text>
+            <Text style={styles.buttonText}>{isSignUp ? i18n.t('login.titulo_cadastrar') : i18n.t('login.titulo_entrar')}</Text>
           )}
         </TouchableOpacity>
 
         <TouchableOpacity onPress={() => setIsSignUp(!isSignUp)} style={styles.toggleContainer}>
           <Text style={[styles.toggleText, { color: '#D1D5DB' }]}>
-            {isSignUp ? 'Já tem uma conta? Entrar' : 'Não tem conta? Cadastre-se'}
+            {isSignUp ? i18n.t('login.alternar_para_entrar') : i18n.t('login.alternar_para_cadastrar')}
           </Text>
         </TouchableOpacity>
       </View>

@@ -1,0 +1,56 @@
+{
+  "header": {
+    "publicar": "Publish",
+    "entrar_cadastrar": "Login / Sign Up",
+    "perfil": "Profile",
+    "sair": "Logout"
+  },
+  "feed": {
+    "pesquisar": "Search...",
+    "tudo": "Home",
+    "piadas": "Jokes",
+    "charadas": "Riddles",
+    "frases": "Quotes",
+    "imagens": "Images",
+    "videos": "Videos",
+    "anterior": "Previous",
+    "proximo": "Next",
+    "pagina": "Page %{current} of %{total}",
+    "detalhes": "Details"
+  },
+  "login": {
+    "titulo_entrar": "Login",
+    "titulo_cadastrar": "Sign Up",
+    "email_placeholder": "Email",
+    "senha_placeholder": "Password",
+    "botao_entrar": "Login",
+    "botao_cadastrar": "Sign Up",
+    "alternar_para_entrar": "Already have an account? Login",
+    "alternar_para_cadastrar": "Don't have an account? Sign Up",
+    "voltar": "Back"
+  },
+  "postar": {
+    "titulo": "What do you want to post?",
+    "piada": "Joke",
+    "charada": "Riddle",
+    "frase": "Quote",
+    "imagem": "Image",
+    "video": "Video",
+    "enviar": "Submit",
+    "cancelar": "Cancel",
+    "titulo_placeholder": "Title",
+    "conteudo_placeholder": "Content...",
+    "pergunta_placeholder": "Question",
+    "resposta_placeholder": "Answer",
+    "url_video": "Video URL (YouTube, etc)",
+    "selecionar_imagem": "Select Image"
+  },
+  "perfil": {
+    "meus_posts": "My Posts",
+    "favoritos": "Favorites",
+    "editar": "Edit Profile",
+    "salvar": "Save",
+    "cancelar": "Cancel",
+    "nome_placeholder": "Your Name"
+  }
+}
