@@ -210,6 +210,7 @@ export default function App() {
           keyExtractor={(item: Post) => item.id}
           contentContainerStyle={styles.listContent}
           ListFooterComponent={renderFooter}
+          ListFooterComponentStyle={{ marginTop: "auto" }}
         />
       )}
       <StatusBar style="auto" />
@@ -320,6 +321,7 @@ const styles = StyleSheet.create({
   },
   listContent: {
     padding: 16,
+    flexGrow: 1,
   },
   paginationContainer: {
     flexDirection: "row",
