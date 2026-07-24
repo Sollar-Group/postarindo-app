@@ -3,11 +3,12 @@ import React, { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, FlatList, SafeAreaView, useColorScheme, ActivityIndicator, TextInput, ScrollView, TouchableOpacity , Alert } from 'react-native';
 import { useRouter } from 'expo-router';
+import { i18n } from '../lib/i18n';
 import { supabase } from '../lib/supabase';
 import { Post } from '../types';
 import { PostCard } from '../components/PostCard';
 
-const CATEGORIES = ['Inicial', 'Charadas', 'Frases', 'Imagens', 'Piadas', 'Vídeos'];
+const CATEGORIES = [ { id: 'Inicial', key: 'tudo' }, { id: 'Piadas', key: 'piadas' }, { id: 'Charadas', key: 'charadas' }, { id: 'Frases', key: 'frases' }, { id: 'Imagens', key: 'imagens' }, { id: 'Vídeos', key: 'videos' } ];
 const ITEMS_PER_PAGE = 10;
 
 export default function App() {
@@ -133,7 +134,7 @@ export default function App() {
         {/* Search Bar */}
         <TextInput
           style={[styles.searchInput, isDark ? styles.searchInputDark : styles.searchInputLight]}
-          placeholder="Pesquisar..."
+          placeholder={i18n.t('feed.pesquisar')}
           placeholderTextColor={isDark ? '#9CA3AF' : '#6B7280'}
           value={searchQuery}
           onChangeText={setSearchQuery}
@@ -148,7 +149,7 @@ export default function App() {
         <FlatList
           data={posts}
           renderItem={({ item }: { item: Post }) => <PostCard post={item} />}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item: Post) => item.id}
           contentContainerStyle={styles.listContent}
           ListFooterComponent={renderFooter}
         />

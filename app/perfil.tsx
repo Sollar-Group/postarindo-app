@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, KeyboardAvoidingView, Platform, Alert, ActivityIndicator, Switch, useColorScheme } from 'react-native';
 import { useRouter } from 'expo-router';
 import { supabase } from '../lib/supabase';
+import { i18n } from '../lib/i18n';
 import { uploadToCloudinary } from '../lib/cloudinary';
 import * as ImagePicker from 'expo-image-picker';
 import { User, Shield, Camera, Trash2, LogOut } from 'lucide-react-native';
@@ -169,7 +170,7 @@ export default function PerfilScreen() {
       'Atenção!',
       'Esta ação é irreversível. Todos os seus posts, comentários e dados serão apagados permanentemente. Deseja continuar?',
       [
-        { text: 'Cancelar', style: 'cancel' },
+        { text: i18n.t('perfil.cancelar'), style: 'cancel' },
         {
           text: 'Sim, desejo excluir',
           style: 'destructive',
@@ -178,7 +179,7 @@ export default function PerfilScreen() {
               'Confirmação Final',
               'Tem certeza absoluta de que deseja excluir sua conta?',
               [
-                { text: 'Cancelar', style: 'cancel' },
+                { text: i18n.t('perfil.cancelar'), style: 'cancel' },
                 {
                   text: 'Excluir Definitivamente',
                   style: 'destructive',
@@ -298,7 +299,7 @@ export default function PerfilScreen() {
               onPress={() => saveProfile()}
               disabled={savingProfile || loading}
             >
-              {savingProfile ? <ActivityIndicator color="#FFF" /> : <Text style={styles.primaryButtonText}>Salvar Alterações</Text>}
+              {savingProfile ? <ActivityIndicator color="#FFF" /> : <Text style={styles.primaryButtonText}>{i18n.t('perfil.salvar')} Alterações</Text>}
             </TouchableOpacity>
           </View>
         ) : (
@@ -360,7 +361,7 @@ export default function PerfilScreen() {
 
             <TouchableOpacity style={styles.signOutButton} onPress={handleSignOut}>
               <LogOut size={20} color="#4B5563" />
-              <Text style={styles.signOutText}>Sair da Conta</Text>
+              <Text style={styles.signOutText}>{i18n.t('header.sair')} da Conta</Text>
             </TouchableOpacity>
 
             <View style={styles.dangerZone}>

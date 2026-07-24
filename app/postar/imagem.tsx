@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, TextInput, TouchableOpacity, useColorScheme, Sa
 import { useRouter } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import { supabase } from '../../lib/supabase';
+import { i18n } from '../../lib/i18n';
 import { findBlockedWord } from '../../lib/moderation';
 import { uploadToCloudinary } from '../../lib/cloudinary';
 import { ImageIcon } from 'lucide-react-native';
@@ -157,7 +158,7 @@ export default function PostarImagem() {
             {loading ? (
               <ActivityIndicator color="#FFFFFF" />
             ) : (
-              <Text style={styles.submitButtonText}>Enviar</Text>
+              <Text style={styles.submitButtonText}>{i18n.t('postar.enviar')}</Text>
             )}
           </TouchableOpacity>
         </ScrollView>

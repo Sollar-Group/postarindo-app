@@ -1,14 +1,15 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, useColorScheme, SafeAreaView, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
+import { i18n } from '../../lib/i18n';
 import { Image as ImageIcon, MessageSquare, HelpCircle, Quote, Video } from 'lucide-react-native';
 
 const POST_TYPES = [
-  { id: 'piada', title: 'Piada', icon: MessageSquare, route: '/postar/piada', color: '#3B82F6', description: 'Conte algo engraçado' },
-  { id: 'charada', title: 'Charada', icon: HelpCircle, route: '/postar/charada', color: '#10B981', description: 'Desafie os outros' },
-  { id: 'frase', title: 'Frase', icon: Quote, route: '/postar/frase', color: '#8B5CF6', description: 'Compartilhe sabedoria' },
-  { id: 'imagem', title: 'Imagem', icon: ImageIcon, route: '/postar/imagem', color: '#F59E0B', description: 'Uma foto vale mais que 1000 palavras' },
-  { id: 'video', title: 'Vídeo', icon: Video, route: '/postar/video', color: '#EF4444', description: 'Compartilhe um momento' },
+  { id: 'piada', title: i18n.t('postar.piada'), icon: MessageSquare, route: '/postar/piada', color: '#3B82F6', description: 'Conte algo engraçado' },
+  { id: 'charada', title: i18n.t('postar.charada'), icon: HelpCircle, route: '/postar/charada', color: '#10B981', description: 'Desafie os outros' },
+  { id: 'frase', title: i18n.t('postar.frase'), icon: Quote, route: '/postar/frase', color: '#8B5CF6', description: 'Compartilhe sabedoria' },
+  { id: 'imagem', title: i18n.t('postar.imagem'), icon: ImageIcon, route: '/postar/imagem', color: '#F59E0B', description: 'Uma foto vale mais que 1000 palavras' },
+  { id: 'video', title: i18n.t('postar.video'), icon: Video, route: '/postar/video', color: '#EF4444', description: 'Compartilhe um momento' },
 ];
 
 export default function PostarIndex() {
@@ -20,7 +21,7 @@ export default function PostarIndex() {
     <SafeAreaView style={[styles.safeArea, isDark ? styles.bgDark : styles.bgLight]}>
       <ScrollView contentContainerStyle={styles.container}>
         <Text style={[styles.title, isDark ? styles.textDark : styles.textLight]}>
-          O que você quer postar?
+          {i18n.t('postar.titulo')}
         </Text>
         <Text style={[styles.subtitle, isDark ? styles.textMutedDark : styles.textMutedLight]}>
           Escolha o tipo de conteúdo
