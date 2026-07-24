@@ -14,6 +14,10 @@ import {
   Alert,
 } from "react-native";
 import { useRouter } from "expo-router";
+import { Picker } from "@react-native-picker/picker";
+import { PlusCircle } from "lucide-react-native";
+import { useLanguage } from "../lib/LanguageContext";
+
 import { i18n } from "../lib/i18n";
 import { supabase } from "../lib/supabase";
 import { Post } from "../types";
@@ -30,6 +34,7 @@ const CATEGORIES = [
 const ITEMS_PER_PAGE = 10;
 
 export default function App() {
+  const { language } = useLanguage();
   const router = useRouter();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
@@ -106,7 +111,7 @@ export default function App() {
           disabled={page === 0}
           onPress={() => setPage((p: number) => Math.max(0, p - 1))}
         >
-          <Text style={styles.pageButtonText}>Anterior</Text>
+          <Text style={styles.pageButtonText}>{i18n.t("feed.anterior")}</Text>
         </TouchableOpacity>
         <Text
           style={[
@@ -114,7 +119,7 @@ export default function App() {
             isDark ? styles.textDark : styles.textLight,
           ]}
         >
-          Página {page + 1}
+          {i18n.t("feed.pagina", { current: page + 1, total: Math.max(page + 1, Math.ceil(posts.length / ITEMS_PER_PAGE) + page) })}
         </Text>
         <TouchableOpacity
           style={[
@@ -124,7 +129,7 @@ export default function App() {
           disabled={posts.length < ITEMS_PER_PAGE}
           onPress={() => setPage((p: number) => p + 1)}
         >
-          <Text style={styles.pageButtonText}>Seguinte</Text>
+          <Text style={styles.pageButtonText}>{i18n.t("feed.proximo")}</Text>
         </TouchableOpacity>
       </View>
     );
@@ -145,42 +150,32 @@ export default function App() {
       >
         {/* Categories */}
         <View style={styles.categoriesWrapper}>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.categoriesScroll}
-          >
-            {CATEGORIES.map((cat) => (
-              <TouchableOpacity
-                key={cat.id}
-                style={[
-                  styles.categoryPill,
-                  activeCategory === cat.id
-                    ? styles.categoryPillActive
-                    : isDark
-                      ? styles.categoryPillDark
-                      : styles.categoryPillLight,
-                ]}
-                onPress={() => {
-                  setActiveCategory(cat.id);
-                  setPage(0);
-                }}
-              >
-                <Text
-                  style={[
-                    styles.categoryText,
-                    activeCategory === cat.id
-                      ? styles.categoryTextActive
-                      : isDark
-                        ? styles.categoryTextDark
-                        : styles.categoryTextLight,
-                  ]}
-                >
-                  {i18n.t(cat.key)}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
+          <View style={styles.pickerContainer}>
+            <Picker
+              selectedValue={activeCategory}
+              onValueChange={(itemValue) => {
+                setActiveCategory(itemValue);
+                setPage(0);
+              }}
+              style={[styles.picker, isDark ? styles.pickerDark : styles.pickerLight]}
+              dropdownIconColor={isDark ? "#F9FAFB" : "#111827"}
+            >
+              {CATEGORIES.map((cat) => (
+                <Picker.Item
+                  key={cat.id}
+                  label={i18n.t(cat.key)}
+                  value={cat.id}
+                  color={isDark ? "#F9FAFB" : "#111827"}
+                />
+              ))}
+            </Picker>
+          </View>
+          <TouchableOpacity style={styles.publishBtn} onPress={() => router.push('/postar')}>
+            <PlusCircle size={20} color="#FFFFFF" />
+            <Text style={styles.publishText}>
+              {i18n.t('header.publicar')}
+            </Text>
+          </TouchableOpacity>
         </View>
 
         {/* Search Bar */}
@@ -270,8 +265,47 @@ const styles = StyleSheet.create({
     color: "#F9FAFB",
   },
   categoriesWrapper: {
-    paddingVertical: 4,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingVertical: 8,
   },
+
+  pickerContainer: {
+    flex: 1,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#D1D5DB',
+    marginRight: 12,
+    overflow: 'hidden',
+  },
+  picker: {
+    height: 40,
+    width: '100%',
+  },
+  pickerLight: {
+    backgroundColor: '#F9FAFB',
+    color: '#111827',
+  },
+  pickerDark: {
+    backgroundColor: '#374151',
+    color: '#F9FAFB',
+  },
+  publishBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#3B82F6',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 8,
+    gap: 6,
+  },
+  publishText: {
+    color: '#FFFFFF',
+    fontWeight: '600',
+    fontSize: 14,
+  },
+
   categoriesScroll: {
     paddingRight: 16,
   },
