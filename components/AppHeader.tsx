@@ -3,7 +3,8 @@ import { useEffect, useState } from 'react';
 import { View, Image, StyleSheet, TouchableOpacity, useColorScheme, Text } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { PlusCircle, User } from 'lucide-react-native';
+import { PlusCircle, User, Globe } from 'lucide-react-native';
+import { useLanguage } from '../lib/LanguageContext';
 import { supabase } from '../lib/supabase';
 import { Session } from '@supabase/supabase-js';
 import { i18n } from '../lib/i18n';
@@ -12,8 +13,16 @@ export function AppHeader() {
   const router = useRouter();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
+
+  const cycleLanguage = () => {
+    if (language === 'pt-BR') setLanguage('en-US');
+    else if (language === 'en-US') setLanguage('es-ES');
+    else setLanguage('pt-BR');
+  };
+
   const insets = useSafeAreaInsets();
   const [session, setSession] = useState<Session | null>(null);
+  const { language, setLanguage } = useLanguage();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -40,6 +49,10 @@ export function AppHeader() {
           resizeMode="contain"
         />
         <View style={styles.actions}>
+          <TouchableOpacity onPress={cycleLanguage} style={styles.langBtn}>
+            <Globe size={20} color={isDark ? '#FFFFFF' : '#111827'} />
+            <Text style={[styles.langText, isDark ? styles.textDark : styles.textLight]}>{language.split('-')[0].toUpperCase()}</Text>
+          </TouchableOpacity>
           <TouchableOpacity style={styles.publishBtn} onPress={() => router.push('/postar')}>
             <PlusCircle size={20} color={isDark ? '#FFFFFF' : '#111827'} />
             <Text style={[styles.publishText, isDark ? styles.textDark : styles.textLight]}>
@@ -84,6 +97,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
+  },
+  langBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    marginRight: 8,
+  },
+  langText: {
+    fontSize: 14,
+    fontWeight: '600',
   },
   publishBtn: {
     flexDirection: 'row',

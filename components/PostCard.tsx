@@ -5,6 +5,8 @@ import { View, Text, Image, StyleSheet, useColorScheme, TouchableOpacity } from 
 import { WebView } from 'react-native-webview';
 import { Eye, ThumbsUp, ThumbsDown, MessageCircle, Share2 } from 'lucide-react-native';
 import { formatDistanceToNow } from 'date-fns';
+import { ptBR, enUS, es } from 'date-fns/locale';
+import { useLanguage } from '../lib/LanguageContext';
 import { Post } from '../types';
 
 interface PostCardProps {
@@ -97,6 +99,7 @@ function getTikTokId(url?: string | null) {
 }
 
 export const PostCard: React.FC<PostCardProps> = ({ post, disableLink }: PostCardProps) => {
+  const { language } = useLanguage();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
 
@@ -119,7 +122,8 @@ export const PostCard: React.FC<PostCardProps> = ({ post, disableLink }: PostCar
 
   const backgroundColor = resolveBackgroundColor(post.cor_fundo, isDark);
   const iconColor = isDark ? '#9CA3AF' : '#4B5563';
-  const timeAgo = post.published_at ? formatDistanceToNow(new Date(post.published_at), { addSuffix: true }) : '';
+  const dateLocale = language === 'pt-BR' ? ptBR : language === 'es-ES' ? es : enUS;
+  const timeAgo = post.published_at ? formatDistanceToNow(new Date(post.published_at), { addSuffix: true, locale: dateLocale }) : '';
 
   const ytId = post.video_url ? getYouTubeId(post.video_url) : null;
   const tkId = post.video_url ? getTikTokId(post.video_url) : null;

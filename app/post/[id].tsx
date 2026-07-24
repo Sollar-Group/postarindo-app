@@ -5,10 +5,13 @@ import { supabase } from '../../lib/supabase';
 import { Post, Comentario } from '../../types';
 import { PostCard } from '../../components/PostCard';
 import { formatDistanceToNow } from 'date-fns';
+import { ptBR, enUS, es } from 'date-fns/locale';
+import { useLanguage } from '../../lib/LanguageContext';
 
 export default function PostDetailsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
+  const { language } = useLanguage();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
 
@@ -94,7 +97,8 @@ export default function PostDetailsScreen() {
   };
 
   const renderComentario = ({ item }: { item: Comentario }) => {
-    const timeAgo = item.created_at ? formatDistanceToNow(new Date(item.created_at), { addSuffix: true }) : '';
+    const dateLocale = language === 'pt-BR' ? ptBR : language === 'es-ES' ? es : enUS;
+    const timeAgo = item.created_at ? formatDistanceToNow(new Date(item.created_at), { addSuffix: true, locale: dateLocale }) : '';
     const initial = item.autor?.nome_exibicao?.charAt(0).toUpperCase() || '?';
 
     return (
