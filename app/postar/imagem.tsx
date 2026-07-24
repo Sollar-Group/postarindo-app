@@ -76,7 +76,7 @@ export default function PostarImagem() {
         autor_id: user?.id,
         titulo: title,
         conteudo: 'Imagem',
-        tags: tags.split(',').map(t => t.trim()).filter(Boolean).join(','),
+        tags: tags.split(',').map(t => t.trim()).filter(Boolean),
         imagem_url: uploadedUrl,
         tipo: 'imagem',
         categoria: 'Imagens',

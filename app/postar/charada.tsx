@@ -52,7 +52,7 @@ export default function PostarCharada() {
       titulo: 'Charada',
       conteudo: content,
       resposta_charada: answer,
-      tags: tags.split(',').map(t => t.trim()).filter(Boolean).join(','),
+      tags: tags.split(',').map(t => t.trim()).filter(Boolean),
       tipo: 'texto',
       categoria: 'Charadas',
       status_aprovacao: status,

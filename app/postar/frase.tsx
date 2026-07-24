@@ -53,7 +53,7 @@ export default function PostarFrase() {
       autor_id: user?.id,
       titulo: 'Frase',
       conteudo: content,
-      tags: tags.split(',').map(t => t.trim()).filter(Boolean).join(','),
+      tags: tags.split(',').map(t => t.trim()).filter(Boolean),
       tipo: 'texto',
       categoria: 'Frases',
       status_aprovacao: status,
