@@ -30,6 +30,10 @@
       "expo-router",
       "expo-localization"
     ],
-    "scheme": "postarindo"
+    "scheme": "postarindo",
+    "transpilePackages": [
+      "@react-native-picker/picker",
+      "@supabase/supabase-js"
+    ]
   }
 }
