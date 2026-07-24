@@ -1,26 +1,44 @@
+import React, { useState, useEffect } from "react";
+import { StatusBar } from "expo-status-bar";
+import {
+  StyleSheet,
+  Text,
+  View,
+  FlatList,
+  SafeAreaView,
+  useColorScheme,
+  ActivityIndicator,
+  TextInput,
+  ScrollView,
+  TouchableOpacity,
+  Alert,
+} from "react-native";
+import { useRouter } from "expo-router";
+import { i18n } from "../lib/i18n";
+import { supabase } from "../lib/supabase";
+import { Post } from "../types";
+import { PostCard } from "../components/PostCard";
 
-import React, { useState, useEffect } from 'react';
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, FlatList, SafeAreaView, useColorScheme, ActivityIndicator, TextInput, ScrollView, TouchableOpacity , Alert } from 'react-native';
-import { useRouter } from 'expo-router';
-import { i18n } from '../lib/i18n';
-import { supabase } from '../lib/supabase';
-import { Post } from '../types';
-import { PostCard } from '../components/PostCard';
-
-const CATEGORIES = [ { id: 'Inicial', key: 'tudo' }, { id: 'Piadas', key: 'piadas' }, { id: 'Charadas', key: 'charadas' }, { id: 'Frases', key: 'frases' }, { id: 'Imagens', key: 'imagens' }, { id: 'Vídeos', key: 'videos' } ];
+const CATEGORIES = [
+  { id: "Inicial", key: "tudo" },
+  { id: "Piadas", key: "piadas" },
+  { id: "Charadas", key: "charadas" },
+  { id: "Frases", key: "frases" },
+  { id: "Imagens", key: "imagens" },
+  { id: "Vídeos", key: "videos" },
+];
 const ITEMS_PER_PAGE = 10;
 
 export default function App() {
   const router = useRouter();
   const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
+  const isDark = colorScheme === "dark";
 
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const [searchQuery, setSearchQuery] = useState('');
-  const [activeCategory, setActiveCategory] = useState('Inicial');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activeCategory, setActiveCategory] = useState("Inicial");
   const [page, setPage] = useState(0);
 
   useEffect(() => {
@@ -41,31 +59,35 @@ export default function App() {
   const fetchPosts = async () => {
     setLoading(true);
     let query = supabase
-      .from('posts')
-      .select('*, autor:users!posts_autor_id_fkey(nome_exibicao, avatar_url, instagram_handle), comentarios(count)')
-      .eq('status_aprovacao', 'aprovado')
-      .order('published_at', { ascending: false })
+      .from("posts")
+      .select(
+        "*, autor:users!posts_autor_id_fkey(nome_exibicao, avatar_url, instagram_handle), comentarios(count)",
+      )
+      .eq("status_aprovacao", "aprovado")
+      .order("published_at", { ascending: false })
       .range(page * ITEMS_PER_PAGE, (page + 1) * ITEMS_PER_PAGE - 1);
 
-    if (activeCategory !== 'Inicial') {
+    if (activeCategory !== "Inicial") {
       let catFilter = activeCategory;
-      if (activeCategory === 'Vídeos') catFilter = 'video';
+      if (activeCategory === "Vídeos") catFilter = "video";
 
-      if (activeCategory === 'Vídeos') {
-         query = query.eq('tipo', 'video');
+      if (activeCategory === "Vídeos") {
+        query = query.eq("tipo", "video");
       } else {
-         query = query.eq('categoria', activeCategory);
+        query = query.eq("categoria", activeCategory);
       }
     }
 
-    if (searchQuery.trim() !== '') {
-      query = query.or(`conteudo.ilike.%${searchQuery}%,tags.cs.{"${searchQuery}"}`);
+    if (searchQuery.trim() !== "") {
+      query = query.or(
+        `conteudo.ilike.%${searchQuery}%,tags.cs.{"${searchQuery}"}`,
+      );
     }
 
     const { data, error } = await query;
 
     if (error) {
-      console.error('Error fetching posts:', error);
+      console.error("Error fetching posts:", error);
     } else {
       const postsWithCommentsCount = (data as any[]).map((item: any) => ({
         ...item,
@@ -86,11 +108,19 @@ export default function App() {
         >
           <Text style={styles.pageButtonText}>Anterior</Text>
         </TouchableOpacity>
-        <Text style={[styles.pageIndicator, isDark ? styles.textDark : styles.textLight]}>
+        <Text
+          style={[
+            styles.pageIndicator,
+            isDark ? styles.textDark : styles.textLight,
+          ]}
+        >
           Página {page + 1}
         </Text>
         <TouchableOpacity
-          style={[styles.pageButton, posts.length < ITEMS_PER_PAGE && styles.pageButtonDisabled]}
+          style={[
+            styles.pageButton,
+            posts.length < ITEMS_PER_PAGE && styles.pageButtonDisabled,
+          ]}
           disabled={posts.length < ITEMS_PER_PAGE}
           onPress={() => setPage((p: number) => p + 1)}
         >
@@ -101,17 +131,35 @@ export default function App() {
   };
 
   return (
-    <SafeAreaView style={[styles.container, isDark ? styles.containerDark : styles.containerLight]}>
-      <View style={[styles.filtersContainer, isDark ? styles.headerDark : styles.headerLight]}>
+    <SafeAreaView
+      style={[
+        styles.container,
+        isDark ? styles.containerDark : styles.containerLight,
+      ]}
+    >
+      <View
+        style={[
+          styles.filtersContainer,
+          isDark ? styles.headerDark : styles.headerLight,
+        ]}
+      >
         {/* Categories */}
         <View style={styles.categoriesWrapper}>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.categoriesScroll}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.categoriesScroll}
+          >
             {CATEGORIES.map((cat) => (
               <TouchableOpacity
                 key={cat.id}
                 style={[
                   styles.categoryPill,
-                  activeCategory === cat.id ? styles.categoryPillActive : (isDark ? styles.categoryPillDark : styles.categoryPillLight)
+                  activeCategory === cat.id
+                    ? styles.categoryPillActive
+                    : isDark
+                      ? styles.categoryPillDark
+                      : styles.categoryPillLight,
                 ]}
                 onPress={() => {
                   setActiveCategory(cat.id);
@@ -121,7 +169,11 @@ export default function App() {
                 <Text
                   style={[
                     styles.categoryText,
-                    activeCategory === cat.id ? styles.categoryTextActive : (isDark ? styles.categoryTextDark : styles.categoryTextLight)
+                    activeCategory === cat.id
+                      ? styles.categoryTextActive
+                      : isDark
+                        ? styles.categoryTextDark
+                        : styles.categoryTextLight,
                   ]}
                 >
                   {i18n.t(cat.key)}
@@ -133,9 +185,12 @@ export default function App() {
 
         {/* Search Bar */}
         <TextInput
-          style={[styles.searchInput, isDark ? styles.searchInputDark : styles.searchInputLight]}
-          placeholder={i18n.t('feed.pesquisar')}
-          placeholderTextColor={isDark ? '#9CA3AF' : '#6B7280'}
+          style={[
+            styles.searchInput,
+            isDark ? styles.searchInputDark : styles.searchInputLight,
+          ]}
+          placeholder={i18n.t("feed.pesquisar")}
+          placeholderTextColor={isDark ? "#9CA3AF" : "#6B7280"}
           value={searchQuery}
           onChangeText={setSearchQuery}
         />
@@ -143,7 +198,10 @@ export default function App() {
 
       {loading && posts.length === 0 ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={isDark ? "#FFFFFF" : "#000000"} />
+          <ActivityIndicator
+            size="large"
+            color={isDark ? "#FFFFFF" : "#000000"}
+          />
         </View>
       ) : (
         <FlatList
@@ -164,37 +222,37 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   containerLight: {
-    backgroundColor: '#F3F4F6', // Neutral light background
+    backgroundColor: "#F3F4F6", // Neutral light background
   },
   containerDark: {
-    backgroundColor: '#111827', // Neutral dark background
+    backgroundColor: "#111827", // Neutral dark background
   },
   header: {
     padding: 16,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     borderBottomWidth: 1,
   },
   loginButton: {
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   filtersContainer: {
     padding: 12,
     borderBottomWidth: 1,
   },
   headerLight: {
-    borderBottomColor: '#E5E7EB',
-    backgroundColor: '#FFFFFF',
+    borderBottomColor: "#E5E7EB",
+    backgroundColor: "#FFFFFF",
   },
   headerDark: {
-    borderBottomColor: '#374151',
-    backgroundColor: '#1F2937',
+    borderBottomColor: "#374151",
+    backgroundColor: "#1F2937",
   },
   headerTitle: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   searchInput: {
     height: 40,
@@ -203,84 +261,93 @@ const styles = StyleSheet.create({
     marginTop: 12, // Added spacing from categories
   },
   searchInputLight: {
-    backgroundColor: '#F3F4F6',
-    color: '#111827',
+    backgroundColor: "#F3F4F6",
+    color: "#111827",
   },
   searchInputDark: {
-    backgroundColor: '#374151',
-    color: '#F9FAFB',
+    backgroundColor: "#374151",
+    color: "#F9FAFB",
   },
   categoriesWrapper: {
-    height: 36,
+    paddingVertical: 4,
   },
   categoriesScroll: {
     paddingRight: 16,
   },
   categoryPill: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 24,
     marginRight: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 1,
   },
   categoryPillActive: {
-    backgroundColor: '#3B82F6',
+    backgroundColor: "#3B82F6",
+    borderColor: "#3B82F6",
+    elevation: 3,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
   },
   categoryPillLight: {
-    backgroundColor: '#E5E7EB',
+    backgroundColor: "#F9FAFB",
+    borderColor: "#D1D5DB",
   },
   categoryPillDark: {
-    backgroundColor: '#374151',
+    backgroundColor: "#374151",
+    borderColor: "#4B5563",
   },
   categoryText: {
-    fontWeight: '600',
+    fontWeight: "600",
     fontSize: 14,
   },
   categoryTextActive: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
   },
   categoryTextLight: {
-    color: '#4B5563',
+    color: "#4B5563",
   },
   categoryTextDark: {
-    color: '#D1D5DB',
+    color: "#D1D5DB",
   },
   loadingContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   listContent: {
     padding: 16,
   },
   paginationContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingVertical: 16,
     paddingHorizontal: 8,
   },
   pageButton: {
-    backgroundColor: '#3B82F6',
+    backgroundColor: "#3B82F6",
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderRadius: 8,
   },
   pageButtonDisabled: {
-    backgroundColor: '#9CA3AF',
+    backgroundColor: "#9CA3AF",
   },
   pageButtonText: {
-    color: '#FFFFFF',
-    fontWeight: 'bold',
+    color: "#FFFFFF",
+    fontWeight: "bold",
   },
   pageIndicator: {
-    fontWeight: '600',
+    fontWeight: "600",
   },
   textLight: {
-    color: '#111827',
+    color: "#111827",
   },
   textDark: {
-    color: '#F9FAFB',
+    color: "#F9FAFB",
   },
 });
