@@ -108,23 +108,23 @@ export default function App() {
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.categoriesScroll}>
             {CATEGORIES.map((cat) => (
               <TouchableOpacity
-                key={cat}
+                key={cat.id}
                 style={[
                   styles.categoryPill,
-                  activeCategory === cat ? styles.categoryPillActive : (isDark ? styles.categoryPillDark : styles.categoryPillLight)
+                  activeCategory === cat.id ? styles.categoryPillActive : (isDark ? styles.categoryPillDark : styles.categoryPillLight)
                 ]}
                 onPress={() => {
-                  setActiveCategory(cat);
+                  setActiveCategory(cat.id);
                   setPage(0);
                 }}
               >
                 <Text
                   style={[
                     styles.categoryText,
-                    activeCategory === cat ? styles.categoryTextActive : (isDark ? styles.categoryTextDark : styles.categoryTextLight)
+                    activeCategory === cat.id ? styles.categoryTextActive : (isDark ? styles.categoryTextDark : styles.categoryTextLight)
                   ]}
                 >
-                  {cat}
+                  {i18n.t(cat.key)}
                 </Text>
               </TouchableOpacity>
             ))}
