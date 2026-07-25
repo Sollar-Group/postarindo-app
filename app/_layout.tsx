@@ -1,4 +1,3 @@
-
 import { Stack } from 'expo-router';
 import { useColorScheme } from 'react-native';
 import { i18n } from "../lib/i18n";
