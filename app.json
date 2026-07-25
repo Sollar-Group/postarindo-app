@@ -25,15 +25,15 @@
       },
       "package": "com.sollar.postarindo"
     },
+    "transpilePackages": [
+      "@react-native-picker/picker",
+      "@supabase/supabase-js"
+    ],
     "plugins": [
       "expo-secure-store",
       "expo-router",
       "expo-localization"
     ],
-    "scheme": "postarindo",
-    "transpilePackages": [
-      "@react-native-picker/picker",
-      "@supabase/supabase-js"
-    ]
+    "scheme": "postarindo"
   }
 }
