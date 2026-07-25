@@ -1,15 +1,3 @@
-import 'react-native-url-polyfill/auto';
-
-if (typeof global.DOMException === 'undefined') {
-  // @ts-ignore
-  global.DOMException = class DOMException extends Error {
-    // @ts-ignore
-    constructor(message, name) {
-      super(message);
-      this.name = name || 'DOMException';
-    }
-  };
-}
 
 import { Stack } from 'expo-router';
 import { useColorScheme } from 'react-native';
