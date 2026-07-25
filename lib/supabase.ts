@@ -1,3 +1,5 @@
+import '../polyfill'; // ISSO OBRIGA O MOTOR A LER A VACINA ANTES DE TUDO
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createClient } from '@supabase/supabase-js';
 
