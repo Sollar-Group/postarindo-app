@@ -1,3 +1,5 @@
+import 'react-native-url-polyfill/auto';
+
 // 1. Injeta o Polyfill globalmente ANTES de tudo
 if (typeof global.DOMException === 'undefined') {
   global.DOMException = class DOMException extends Error {
